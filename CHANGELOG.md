@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Faustvii/agent-tools/compare/v1.1.0...v1.1.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (cf169cd ➔ 0ae6809) ([#9](https://github.com/Faustvii/agent-tools/issues/9)) ([69d68b1](https://github.com/Faustvii/agent-tools/commit/69d68b12a766102eb7d68a9875c1f332b8c1716c))
+
 ## [1.1.0](https://github.com/Faustvii/agent-tools/compare/v1.0.1...v1.1.0) (2026-10-16)
 
 
