@@ -5,7 +5,7 @@ Small static command-line tools for coding agents, such as
 
 | Tool | What it does |
 | ---- | ------------ |
-| [`konflate`](cmd/konflate/main.go) | Prints a pull request's rendered Flux diff from a [konflate](https://github.com/home-operations/konflate) server as plain text: `konflate <pr> [resource]`, with the server in `KONFLATE_URL` or `--server`. |
+| [`konflate`](cmd/konflate/main.go) | Prints a pull request's rendered Flux diff from a [konflate](https://github.com/home-operations/konflate) server as plain text: `konflate <pr> [resource]`, with the server in `KONFLATE_URL` or `--server`. `KONFLATE_HIDE_URL=true` drops the summary's link to the server. |
 
 ## Install with mise
 

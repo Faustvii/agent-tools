@@ -9,7 +9,10 @@
 // <pr> is the pull request number, with or without a leading #. <resource> is
 // an id from the overview (r3) or a substring of a title. The server comes from
 // KONFLATE_URL, which kritika's runner sets through its mise config's [env], or
-// from --server.
+// from --server. KONFLATE_HIDE_URL=true keeps the server's address out of the
+// output: it drops the summary's "full diff" link, leaves --server out of the
+// commands the output suggests, and replaces the address in error messages
+// with "(server)".
 package main
 
 import (
@@ -21,6 +24,7 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"regexp"
@@ -96,13 +100,18 @@ func main() {
 	if err != nil || pr <= 0 {
 		fail("pull request number %q is not a positive integer", flag.Arg(0))
 	}
+	v := os.Getenv("KONFLATE_HIDE_URL")
+	hideURL, err := parseHideURL(v)
+	if err != nil {
+		fail("KONFLATE_HIDE_URL %q is not a boolean (true or false)", v)
+	}
 	self = "konflate"
-	if *server != os.Getenv("KONFLATE_URL") {
+	if *server != os.Getenv("KONFLATE_URL") && !hideURL {
 		self += " --server " + *server
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), *wait)
 	defer cancel()
-	c := client{base: strings.TrimRight(*server, "/"), http: &http.Client{}}
+	c := client{base: strings.TrimRight(*server, "/"), http: &http.Client{}, hideURL: hideURL}
 
 	env, err := c.diff(ctx, pr)
 	switch {
@@ -110,7 +119,7 @@ func main() {
 		fmt.Printf("konflate is still rendering PR #%d. Run the same command again in a minute.\n", pr)
 		return
 	case err != nil:
-		fail("%v", err)
+		fail("%s", c.scrub(err))
 	case env == nil:
 		fmt.Printf("konflate does not track PR #%d (forks and PRs outside its filter are not rendered). Review without it.\n", pr)
 		return
@@ -125,11 +134,20 @@ func main() {
 	} else {
 		summary, err := c.summary(ctx, pr)
 		if err != nil {
-			summary = fmt.Sprintf("(konflate summary unavailable: %v)", err)
+			summary = fmt.Sprintf("(konflate summary unavailable: %s)", c.scrub(err))
 		}
 		writeOverview(out, pr, env, summary)
 	}
 	os.Stdout.WriteString(out.String())
+}
+
+// parseHideURL reads KONFLATE_HIDE_URL: unset or empty is false, anything
+// strconv.ParseBool rejects is an error rather than a silent false.
+func parseHideURL(v string) (bool, error) {
+	if v == "" {
+		return false, nil
+	}
+	return strconv.ParseBool(v)
 }
 
 func fail(format string, args ...any) {
@@ -149,8 +167,25 @@ func oneLine(s string) string { return strings.Join(strings.Fields(s), " ") }
 // --- konflate API ---
 
 type client struct {
-	base string
-	http *http.Client
+	base    string
+	http    *http.Client
+	hideURL bool // drop the summary's review link, see hideReviewLink
+}
+
+// scrub renders err for printing, with the server's address replaced by
+// "(server)" when hideURL is set. Dial and DNS errors name the bare host, so
+// the host is replaced as well as the full base URL.
+func (c client) scrub(err error) string {
+	s := err.Error()
+	if !c.hideURL {
+		return s
+	}
+	s = strings.ReplaceAll(s, c.base, "(server)")
+	if u, perr := url.Parse(c.base); perr == nil && u.Hostname() != "" {
+		s = strings.ReplaceAll(s, u.Host, "(server)")
+		s = strings.ReplaceAll(s, u.Hostname(), "(server)")
+	}
+	return s
 }
 
 func (c client) get(ctx context.Context, path, accept string) (*http.Response, error) {
@@ -213,7 +248,20 @@ func (c client) summary(ctx context.Context, pr int) (string, error) {
 	}
 	// Drop the HTML marker comment konflate uses to find its own PR comment.
 	s := regexp.MustCompile(`(?m)^<!--.*-->\n?`).ReplaceAllString(string(body), "")
+	if c.hideURL {
+		s = hideReviewLink(s)
+	}
 	return strings.TrimSpace(s), nil
+}
+
+// reviewLink is the footer's link to konflate's review page, which the API
+// builds from the address the request reached it at.
+var reviewLink = regexp.MustCompile(`\s*·?\s*\[full diff →\]\([^)]*\)`)
+
+// hideReviewLink drops the footer's review link, and with it the server's
+// address.
+func hideReviewLink(s string) string {
+	return reviewLink.ReplaceAllString(s, "")
 }
 
 // --- output ---
