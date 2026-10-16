@@ -1,15 +1,16 @@
 ---
 # yaml-language-server: $schema=https://kritika.home-operations.com/kritika.schema.json
 rules:
-  # Renovate bumps the mise tools, Go modules and Actions here. The closing
-  # sentence gives the risk scorer the compatibility evidence it asked for
-  # on #4, where a Go minor with no findings was still rated high.
+  # Steers what a review of a Renovate bump reads and what its summary says.
+  # It cannot move the rating: this file may only lower confidence.risk, and
+  # the cap for this repo lives in the kritika admin config in home-ops.
   - id: renovate
     when: [{ name: renovate, expr: pr.headRef.startsWith("renovate/") }]
     rule: >-
-      This is a Renovate update: a mise tool in .mise.toml (Go, goreleaser,
-      actionlint, shellcheck), a Go module in go.mod, or a GitHub Action in
-      .github/workflows. The question is whether merging breaks the build,
+      This is a Renovate update: a mise tool pinned in .mise.toml, a Go module
+      in go.mod, a GitHub Action in .github/workflows, or the preset pin in
+      .renovaterc.json5 (a preset changes defaults that apply to every
+      manager). The question is whether merging breaks the build,
       tests, lint or release. Read the release notes for each version between
       the old and the new; the pull request body often has them, otherwise use
       gh release view on the upstream repository. Go has no GitHub releases:
@@ -19,10 +20,15 @@ rules:
       notes against what this repository uses: for Go, the go directive in
       go.mod (a newer toolchain builds the module at that language version)
       and the standard library packages the code imports; for goreleaser, the
-      keys in .goreleaser.yaml; for an Action, the inputs the workflows pass.
+      keys in .goreleaser.yaml; for an Action, the inputs the workflows pass;
+      for the preset, the rules this repository's .renovaterc.json5 relies on.
       Report a removal, rename or changed default that touches one of those.
       A change to something the repository does not use is not a finding. Do
-      not read upstream source code or download a compare as a diff. Give an
+      not read upstream source code or download a compare as a diff. A digest
+      update with no version change has no notes between versions: name both
+      commits and list the commit subjects between them with gh api
+      repos/OWNER/REPO/compare/OLD...NEW --jq '.commits[].commit.message',
+      and say plainly when no release notes cover the range. Give an
       open question at most two more commands, then name it in the summary.
       In the summary, say which release notes you read and whether anything
       in them touches this repository.
