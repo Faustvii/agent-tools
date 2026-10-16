@@ -53,6 +53,11 @@ jobs:
 
       - name: Set up mise
         uses: jdx/mise-action@9b200bcecbfd6303e69a4a261b2e09e3757440a7 # v5.2.0
+        with:
+          # This job publishes and attests the archives, so it must not restore
+          # tools from a cache another workflow wrote (mise-action's README,
+          # "Release workflows").
+          cache: false
 
       - name: GoReleaser
         run: goreleaser release --clean
