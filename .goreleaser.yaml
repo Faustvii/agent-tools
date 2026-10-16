@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+# Every tool under cmd/ ships in one archive per platform, because mise allows a
+# single entry per "github:Faustvii/agent-tools" and picks one asset per
+# install; the entry's filter_bins chooses which commands go on PATH. The
+# binaries are static, which is all kritika's runner image can execute.
+project_name: agent-tools
+
+builds:
+  - id: konflate
+    main: ./cmd/konflate
+    binary: konflate
+    env: [CGO_ENABLED=0]
+    goos: [linux]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags: [-s -w]
+
+archives:
+  - formats: [tar.gz]
+    # No version in the name, so mise's asset detection and a pinned
+    # asset_pattern stay the same across releases.
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    files: [README.md]
+
+checksum:
+  name_template: checksums.txt
+
+# release-please creates the release and writes its notes; only add assets.
+release:
+  mode: keep-existing
+
+changelog:
+  disable: true

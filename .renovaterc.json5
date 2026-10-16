@@ -1,0 +1,21 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "github>home-operations/renovate-presets#8.1.0",
+    "github>Faustvii/home-ops//.renovate/labels.json5",
+  ],
+  dependencyDashboard: true,
+  dependencyDashboardTitle: "Renovate Dashboard 🤖",
+  suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
+  postUpdateOptions: ["gomodTidy"],
+  semanticCommits: "enabled",
+  packageRules: [
+    {
+      description: "Auto-merge updates once kritika approves",
+      matchUpdateTypes: ["major", "minor", "patch", "digest", "pin", "pinDigest"],
+      automerge: true,
+      automergeType: "pr",
+      platformAutomerge: true,
+    },
+  ],
+}
