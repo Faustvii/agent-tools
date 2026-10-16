@@ -9,9 +9,10 @@
 // <pr> is the pull request number, with or without a leading #. <resource> is
 // an id from the overview (r3) or a substring of a title. The server comes from
 // KONFLATE_URL, which kritika's runner sets through its mise config's [env], or
-// from --server. KONFLATE_HIDE_URL=true drops the summary's "full diff" link,
-// which konflate builds from the server's address, so an agent cannot quote
-// the address into a public comment.
+// from --server. KONFLATE_HIDE_URL=true keeps the server's address out of the
+// output: it drops the summary's "full diff" link, leaves --server out of the
+// commands the output suggests, and replaces the address in error messages
+// with "(server)".
 package main
 
 import (
@@ -23,6 +24,7 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"regexp"
@@ -98,17 +100,17 @@ func main() {
 	if err != nil || pr <= 0 {
 		fail("pull request number %q is not a positive integer", flag.Arg(0))
 	}
-	self = "konflate"
-	if *server != os.Getenv("KONFLATE_URL") {
-		self += " --server " + *server
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), *wait)
-	defer cancel()
 	v := os.Getenv("KONFLATE_HIDE_URL")
 	hideURL, err := parseHideURL(v)
 	if err != nil {
 		fail("KONFLATE_HIDE_URL %q is not a boolean (true or false)", v)
 	}
+	self = "konflate"
+	if *server != os.Getenv("KONFLATE_URL") && !hideURL {
+		self += " --server " + *server
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), *wait)
+	defer cancel()
 	c := client{base: strings.TrimRight(*server, "/"), http: &http.Client{}, hideURL: hideURL}
 
 	env, err := c.diff(ctx, pr)
@@ -117,7 +119,7 @@ func main() {
 		fmt.Printf("konflate is still rendering PR #%d. Run the same command again in a minute.\n", pr)
 		return
 	case err != nil:
-		fail("%v", err)
+		fail("%s", c.scrub(err))
 	case env == nil:
 		fmt.Printf("konflate does not track PR #%d (forks and PRs outside its filter are not rendered). Review without it.\n", pr)
 		return
@@ -132,7 +134,7 @@ func main() {
 	} else {
 		summary, err := c.summary(ctx, pr)
 		if err != nil {
-			summary = fmt.Sprintf("(konflate summary unavailable: %v)", err)
+			summary = fmt.Sprintf("(konflate summary unavailable: %s)", c.scrub(err))
 		}
 		writeOverview(out, pr, env, summary)
 	}
@@ -168,6 +170,22 @@ type client struct {
 	base    string
 	http    *http.Client
 	hideURL bool // drop the summary's review link, see hideReviewLink
+}
+
+// scrub renders err for printing, with the server's address replaced by
+// "(server)" when hideURL is set. Dial and DNS errors name the bare host, so
+// the host is replaced as well as the full base URL.
+func (c client) scrub(err error) string {
+	s := err.Error()
+	if !c.hideURL {
+		return s
+	}
+	s = strings.ReplaceAll(s, c.base, "(server)")
+	if u, perr := url.Parse(c.base); perr == nil && u.Hostname() != "" {
+		s = strings.ReplaceAll(s, u.Host, "(server)")
+		s = strings.ReplaceAll(s, u.Hostname(), "(server)")
+	}
+	return s
 }
 
 func (c client) get(ctx context.Context, path, accept string) (*http.Response, error) {

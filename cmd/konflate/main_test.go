@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestHideReviewLink(t *testing.T) {
 	for _, tc := range []struct{ name, in, want string }{
@@ -46,6 +49,39 @@ func TestParseHideURL(t *testing.T) {
 			}
 			if got != tc.want {
 				t.Errorf("parseHideURL(%q) = %v, want %v", tc.in, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestScrub(t *testing.T) {
+	base := "https://konflate.example.com:8443"
+	for _, tc := range []struct {
+		name, in, want string
+		hide           bool
+	}{
+		{
+			name: "request URL",
+			in:   `Get "https://konflate.example.com:8443/api/prs/1/diff": EOF`,
+			want: `Get "(server)/api/prs/1/diff": EOF`,
+			hide: true,
+		},
+		{
+			name: "bare host",
+			in:   "dial tcp: lookup konflate.example.com: no such host",
+			want: "dial tcp: lookup (server): no such host",
+			hide: true,
+		},
+		{
+			name: "hiding off",
+			in:   `Get "https://konflate.example.com:8443/api/prs/1/diff": EOF`,
+			want: `Get "https://konflate.example.com:8443/api/prs/1/diff": EOF`,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c := client{base: base, hideURL: tc.hide}
+			if got := c.scrub(errors.New(tc.in)); got != tc.want {
+				t.Errorf("scrub(%q)\n got %q\nwant %q", tc.in, got, tc.want)
 			}
 		})
 	}
