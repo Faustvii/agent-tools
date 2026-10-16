@@ -9,7 +9,9 @@
 // <pr> is the pull request number, with or without a leading #. <resource> is
 // an id from the overview (r3) or a substring of a title. The server comes from
 // KONFLATE_URL, which kritika's runner sets through its mise config's [env], or
-// from --server.
+// from --server. KONFLATE_HIDE_URL=true drops the summary's "full diff" link,
+// which konflate builds from the server's address, so an agent cannot quote
+// the address into a public comment.
 package main
 
 import (
@@ -102,7 +104,8 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), *wait)
 	defer cancel()
-	c := client{base: strings.TrimRight(*server, "/"), http: &http.Client{}}
+	hideURL, _ := strconv.ParseBool(os.Getenv("KONFLATE_HIDE_URL"))
+	c := client{base: strings.TrimRight(*server, "/"), http: &http.Client{}, hideURL: hideURL}
 
 	env, err := c.diff(ctx, pr)
 	switch {
@@ -149,8 +152,9 @@ func oneLine(s string) string { return strings.Join(strings.Fields(s), " ") }
 // --- konflate API ---
 
 type client struct {
-	base string
-	http *http.Client
+	base    string
+	http    *http.Client
+	hideURL bool // drop the summary's review link, see hideReviewLink
 }
 
 func (c client) get(ctx context.Context, path, accept string) (*http.Response, error) {
@@ -213,7 +217,20 @@ func (c client) summary(ctx context.Context, pr int) (string, error) {
 	}
 	// Drop the HTML marker comment konflate uses to find its own PR comment.
 	s := regexp.MustCompile(`(?m)^<!--.*-->\n?`).ReplaceAllString(string(body), "")
+	if c.hideURL {
+		s = hideReviewLink(s)
+	}
 	return strings.TrimSpace(s), nil
+}
+
+// reviewLink is the footer's link to konflate's review page, which the API
+// builds from the address the request reached it at.
+var reviewLink = regexp.MustCompile(`\s*·?\s*\[full diff →\]\([^)]*\)`)
+
+// hideReviewLink drops the footer's review link, and with it the server's
+// address.
+func hideReviewLink(s string) string {
+	return reviewLink.ReplaceAllString(s, "")
 }
 
 // --- output ---
