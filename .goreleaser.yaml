@@ -27,9 +27,15 @@ archives:
 checksum:
   name_template: checksums.txt
 
-# release-please creates the release and writes its notes; only add assets.
+# Releases are immutable once published, so release-please creates a draft
+# (with its notes and the tag), goreleaser only adds assets to that draft, and
+# the release workflow publishes it last.
 release:
   mode: keep-existing
+  draft: true
+  use_existing_draft: true
+  preflight:
+    fail_on_error: true
 
 changelog:
   disable: true

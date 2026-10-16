@@ -2,9 +2,10 @@
 name: "Release"
 
 # release-please keeps a release PR open from the conventional commits on main.
-# Merging it tags `v<version>` with a GitHub release, and this workflow then
-# builds every tool with goreleaser, attaches the archives to that release and
-# attests them; mise checks the attestations when it installs.
+# Merging it tags `v<version>` with a draft GitHub release, since a published
+# release is immutable. This workflow then builds every tool with goreleaser,
+# attaches the archives to the draft, attests them (mise checks the
+# attestations when it installs) and publishes the release.
 on:
   push:
     branches: ["main"]
@@ -65,3 +66,9 @@ jobs:
           subject-path: dist/*.tar.gz
           # Storage records are only created for organization-owned repos.
           create-storage-record: false
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: gh release edit "${TAG}" --repo "${GITHUB_REPOSITORY}" --draft=false

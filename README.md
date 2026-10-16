@@ -14,7 +14,7 @@ with every tool inside. Pick the commands with `filter_bins`:
 
 ```toml
 [tools]
-"github:Faustvii/agent-tools" = { version = "0.1.0", filter_bins = ["konflate"] }
+"github:Faustvii/agent-tools" = { version = "1.0.1", filter_bins = ["konflate"] }
 
 [env]
 KONFLATE_URL = "https://konflate.example.com"
