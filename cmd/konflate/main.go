@@ -104,7 +104,11 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), *wait)
 	defer cancel()
-	hideURL, _ := strconv.ParseBool(os.Getenv("KONFLATE_HIDE_URL"))
+	v := os.Getenv("KONFLATE_HIDE_URL")
+	hideURL, err := parseHideURL(v)
+	if err != nil {
+		fail("KONFLATE_HIDE_URL %q is not a boolean (true or false)", v)
+	}
 	c := client{base: strings.TrimRight(*server, "/"), http: &http.Client{}, hideURL: hideURL}
 
 	env, err := c.diff(ctx, pr)
@@ -133,6 +137,15 @@ func main() {
 		writeOverview(out, pr, env, summary)
 	}
 	os.Stdout.WriteString(out.String())
+}
+
+// parseHideURL reads KONFLATE_HIDE_URL: unset or empty is false, anything
+// strconv.ParseBool rejects is an error rather than a silent false.
+func parseHideURL(v string) (bool, error) {
+	if v == "" {
+		return false, nil
+	}
+	return strconv.ParseBool(v)
 }
 
 func fail(format string, args ...any) {

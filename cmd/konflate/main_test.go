@@ -27,3 +27,26 @@ func TestHideReviewLink(t *testing.T) {
 		})
 	}
 }
+
+func TestParseHideURL(t *testing.T) {
+	for _, tc := range []struct {
+		in      string
+		want    bool
+		wantErr bool
+	}{
+		{in: "", want: false},
+		{in: "true", want: true},
+		{in: "false", want: false},
+		{in: "yes", wantErr: true},
+	} {
+		t.Run(tc.in, func(t *testing.T) {
+			got, err := parseHideURL(tc.in)
+			if (err != nil) != tc.wantErr {
+				t.Fatalf("parseHideURL(%q) error = %v, wantErr %v", tc.in, err, tc.wantErr)
+			}
+			if got != tc.want {
+				t.Errorf("parseHideURL(%q) = %v, want %v", tc.in, got, tc.want)
+			}
+		})
+	}
+}
