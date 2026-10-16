@@ -1,6 +1,6 @@
 # The same tools locally and in CI (jdx/mise-action reads this file).
 [tools]
-go = "1.26.6"
+go = "1.27.2"
 "aqua:goreleaser/goreleaser" = "2.18.3"
 "aqua:rhysd/actionlint" = "1.7.12"
 "aqua:koalaman/shellcheck" = "0.11.0"
