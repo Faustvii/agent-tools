@@ -11,6 +11,12 @@
   semanticCommits: "enabled",
   packageRules: [
     {
+      description: "Renovate preset updates do not break the released tools",
+      matchManagers: ["renovate-config"],
+      semanticCommitType: "chore",
+      commitMessagePrefix: "{{semanticCommitType}}({{semanticCommitScope}}):",
+    },
+    {
       description: "Auto-merge updates once kritika approves",
       matchUpdateTypes: ["major", "minor", "patch", "digest", "pin", "pinDigest"],
       automerge: true,
