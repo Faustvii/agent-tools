@@ -1,9 +1,11 @@
 ---
 # yaml-language-server: $schema=https://kritika.home-operations.com/kritika.schema.json
+# Toolchain bumps can be high risk even with no findings; critical still stops.
+confidence:
+  risk: high
 rules:
   # Steers what a review of a Renovate bump reads and what its summary says.
-  # It cannot move the rating: this file may only lower confidence.risk, and
-  # the cap for this repo lives in the kritika admin config in home-ops.
+  # The approval-risk cap is set above, separately from the scorer's rating.
   - id: renovate
     when: [{ name: renovate, expr: pr.headRef.startsWith("renovate/") }]
     rule: >-
