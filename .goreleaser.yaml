@@ -1,10 +1,9 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 version: 2
 
-# Every tool under cmd/ ships in one archive per platform, because mise allows a
-# single entry per "github:Faustvii/agent-tools" and picks one asset per
-# install; the entry's filter_bins chooses which commands go on PATH. The
-# binaries are static, which is all kritika's runner image can execute.
+# Every tool under cmd/ ships in one archive per platform. registry.yaml names
+# the commands Kritika exposes from it; mise users select them with filter_bins.
+# The binaries are static so they run without additional runtime libraries.
 project_name: agent-tools
 
 builds:
@@ -19,8 +18,7 @@ builds:
 
 archives:
   - formats: [tar.gz]
-    # No version in the name, so mise's asset detection and a pinned
-    # asset_pattern stay the same across releases.
+    # Keep the asset names stable across releases for registry.yaml and mise.
     name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
     files: [README.md]
 

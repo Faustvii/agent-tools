@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/registry.json
+packages:
+  - name: Faustvii/agent-tools
+    type: github_release
+    repo_owner: Faustvii
+    repo_name: agent-tools
+    description: Static command-line tools for coding agents
+    asset: agent-tools-{{.OS}}-{{.Arch}}.tar.gz
+    format: tar.gz
+    supported_envs:
+      - linux/amd64
+      - linux/arm64
+    files:
+      - name: konflate
+        src: konflate
+    checksum:
+      type: github_release
+      asset: checksums.txt
+      algorithm: sha256
