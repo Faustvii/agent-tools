@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/Faustvii/agent-tools/compare/v1.1.1...v1.2.0) (2026-10-31)
+
+
+### Features
+
+* add custom aqua registry for kritika ([#26](https://github.com/Faustvii/agent-tools/issues/26)) ([da4c0fb](https://github.com/Faustvii/agent-tools/commit/da4c0fb796d01b60d8a419ceea85471577bd5fb6))
+
+
+### Bug Fixes
+
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (1680459 ➔ 30a3351) ([#28](https://github.com/Faustvii/agent-tools/issues/28)) ([6e19425](https://github.com/Faustvii/agent-tools/commit/6e194255f8dfef2da68196484ce3ad5e4d9ea9c6))
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (19e424e ➔ 1da6254) ([#24](https://github.com/Faustvii/agent-tools/issues/24)) ([1cadab8](https://github.com/Faustvii/agent-tools/commit/1cadab84460aa1137ee6310d32a1a2a8ba6ac06b))
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (1da6254 ➔ 1680459) ([#27](https://github.com/Faustvii/agent-tools/issues/27)) ([2540cbe](https://github.com/Faustvii/agent-tools/commit/2540cbe33821da74943722810c9ffc17aa9d87ef))
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (9f2b28d ➔ 19e424e) ([#22](https://github.com/Faustvii/agent-tools/issues/22)) ([bc994dd](https://github.com/Faustvii/agent-tools/commit/bc994dda15e9289bc1547279e4eff1357a755c52))
+* **deps:** update module go.yaml.in/yaml/v3 (v3.0.5 ➔ v3.0.6) ([#30](https://github.com/Faustvii/agent-tools/issues/30)) ([a72fd90](https://github.com/Faustvii/agent-tools/commit/a72fd9086a67a44e59220a48f498053c547ba815))
+
 ## [1.1.1](https://github.com/Faustvii/agent-tools/compare/v1.1.0...v1.1.1) (2026-10-23)
 
 
