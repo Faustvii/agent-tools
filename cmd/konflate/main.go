@@ -33,7 +33,7 @@ import (
 	"strings"
 	"time"
 
-	"go.yaml.in/yaml/v3"
+	"go.yaml.in/yaml/v4"
 	// CA roots for when the host has none (a scratch image run on its own);
 	// the system pool still wins where one exists, as in the runner.
 	_ "golang.org/x/crypto/x509roots/fallback"
