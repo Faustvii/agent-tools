@@ -25,7 +25,7 @@ Then add this to the reviewed repository's `.kritika.yaml`:
 ```yaml
 tools:
     # renovate: datasource=github-releases depName=Faustvii/agent-tools
-    aqua:Faustvii/agent-tools: v1.1.1
+    aqua:Faustvii/agent-tools: v2.0.0
 ```
 
 Use the exact release tag, including `v`. Configure `KONFLATE_URL` in the runner's
