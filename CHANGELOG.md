@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/Faustvii/agent-tools/compare/v2.0.0...v3.0.0) (2026-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **github-release:** Update release Faustvii/agent-tools to v2 ([#52](https://github.com/Faustvii/agent-tools/issues/52))
+
+### Miscellaneous Chores
+
+* **github-release:** Update release Faustvii/agent-tools to v2 ([#52](https://github.com/Faustvii/agent-tools/issues/52)) ([018748e](https://github.com/Faustvii/agent-tools/commit/018748e33ab2e24a9391f94fb42ccf6a5b6453b8))
+
 ## [2.0.0](https://github.com/Faustvii/agent-tools/compare/v1.1.1...v2.0.0) (2026-11-18)
 
 
