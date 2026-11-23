@@ -1,4 +1,4 @@
 go.yaml.in/yaml/v4 v4.0.0 h1:/LG1pNO84Z4l603j/xMn69CcS5OYhMQ/f7l2LoQUGuw=
 go.yaml.in/yaml/v4 v4.0.0/go.mod h1:aZqd9kCMsGL7AuUv/m/PvWLdg5sjJsZ4oHDEnfPPfY0=
-golang.org/x/crypto/x509roots/fallback v0.0.0-20261123165210-6c21c5864259 h1:wXcJiWf6AuFE+YJzfySrqJW1+yko6kcV2W+fg4n6WGk=
-golang.org/x/crypto/x509roots/fallback v0.0.0-20261123165210-6c21c5864259/go.mod h1:HPze8vhfG6fO06AM+VSvxRm4E3+5Yk375mgrJ5M2z1E=
+golang.org/x/crypto/x509roots/fallback v0.0.0-20261123192653-4dc4fb521066 h1:IkSTNrk5HNulTzFHeCzJ5t3UnzLJkSIPaU7nmNI37Uk=
+golang.org/x/crypto/x509roots/fallback v0.0.0-20261123192653-4dc4fb521066/go.mod h1:HPze8vhfG6fO06AM+VSvxRm4E3+5Yk375mgrJ5M2z1E=
