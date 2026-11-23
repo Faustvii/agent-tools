@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.0.0](https://github.com/Faustvii/agent-tools/compare/v2.0.0...v3.0.0) (2026-11-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **github-release:** Update release Faustvii/agent-tools to v2 ([#52](https://github.com/Faustvii/agent-tools/issues/52))
+
+### Bug Fixes
+
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (6c21c58 ➔ 4dc4fb5) ([#57](https://github.com/Faustvii/agent-tools/issues/57)) ([41634f5](https://github.com/Faustvii/agent-tools/commit/41634f5e8ac69c6e56e58c110505425c4fc715f2))
+* **deps:** update golang.org/x/crypto/x509roots/fallback digest (7390709 ➔ 6c21c58) ([#56](https://github.com/Faustvii/agent-tools/issues/56)) ([d81a2eb](https://github.com/Faustvii/agent-tools/commit/d81a2eb2e7f8991b831bf0c2b9fc779afe7cd470))
+
+
+### Miscellaneous Chores
+
+* **github-release:** Update release Faustvii/agent-tools to v2 ([#52](https://github.com/Faustvii/agent-tools/issues/52)) ([018748e](https://github.com/Faustvii/agent-tools/commit/018748e33ab2e24a9391f94fb42ccf6a5b6453b8))
+
 ## [2.0.0](https://github.com/Faustvii/agent-tools/compare/v1.1.1...v2.0.0) (2026-11-18)
 
 
